@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"github.com/rs/cors"
+	"github.com/rubenv/opencagedata"
 )
 
 type User struct {
@@ -69,6 +70,23 @@ func initDB(dataSourceName string) {
 	}
 }
 
+func geocode(city, state, country string) (float64, float64, error) {
+	geocoder := opencagedata.NewGeocoder("89d5a7e1287b40b9b8418e3e7775e054")
+
+	query := fmt.Sprintf("%s, %s, %s", city, state, country)
+	result, err := geocoder.Geocode(query, nil)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	if len(result.Results) > 0 {
+		f_result := result.Results[0]
+		return float64(f_result.Geometry.Latitude), float64(f_result.Geometry.Longitude), nil
+	}
+
+	return 0, 0, fmt.Errorf("No results found for query: %s", query)
+}
+
 func register(w http.ResponseWriter, r *http.Request) {
 	var user User
 	json.NewDecoder(r.Body).Decode(&user)
@@ -78,11 +96,15 @@ func register(w http.ResponseWriter, r *http.Request) {
 	query := "INSERT INTO profile (email, password, birth_date, birth_time, city, state, country, latitude, longitude) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id"
 	err := db.QueryRow(query, user.Email, user.Password, user.BirthDate, user.BirthTime, user.City, user.State, user.Country, user.Latitude, user.Longitude).Scan(&user.ID)
 
+	latitude, longitude, err := geocode(user.City, user.State, user.Country)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "Error registering user: %v", err) // Update this line to include the error details
+		fmt.Fprintf(w, "Error geocoding: %v", err)
 		return
 	}
+
+	user.Latitude = latitude
+	user.Longitude = longitude
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)

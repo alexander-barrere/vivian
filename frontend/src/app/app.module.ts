@@ -6,6 +6,7 @@ import { VivianModule } from './vivian/vivian.module';
 import { VivianComponent } from './vivian/vivian.component'; // Add this import
 import { StarfiresComponent } from './starfires/starfires.component';
 import { UserService } from './user.service';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { UserService } from './user.service';
   imports: [
     BrowserModule,
     HttpClientModule,
+    MatSnackBarModule,
     VivianModule // Import VivianModule here
   ],
   providers: [UserService],
