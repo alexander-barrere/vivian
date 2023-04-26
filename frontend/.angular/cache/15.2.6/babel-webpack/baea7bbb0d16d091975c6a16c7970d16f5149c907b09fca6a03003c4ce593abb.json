@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const environment = {\n  production: false,\n  apiUrl: 'http://localhost:8080' // The URL of your Golang backend API\n};","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

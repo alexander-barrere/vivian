@@ -1,0 +1,18 @@
+<button class="pretty-button">vivian</button>
+<form (submit)="register()">
+  <div class="form-section">
+    <h2>Personal Information</h2>
+    <input [(ngModel)]="user.firstName" name="firstName" placeholder="First Name">
+    <input [(ngModel)]="user.lastName" name="lastName" placeholder="Last Name">
+    <input [(ngModel)]="user.email" name="email" placeholder="Email">
+  </div>
+  <div class="form-section">
+    <h2>Birth Data</h2>
+    <input [(ngModel)]="user.city" name="city" placeholder="City">
+    <input [(ngModel)]="user.state" name="state" placeholder="State">
+    <input [(ngModel)]="user.country" name="country" placeholder="Country">
+    <input [(ngModel)]="user.birthDate" name="birthDate" placeholder="Birth date" type="date">
+    <input [(ngModel)]="user.birthTime" name="birthTime" placeholder="Birth time" type="time">
+  </div>
+  <button type="submit">Register</button>
+</form>
