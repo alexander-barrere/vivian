@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -14,16 +15,18 @@ import (
 )
 
 type User struct {
-	ID        int64   `json:"id"`
-	Email     string  `json:"email"`
-	Password  string  `json:"-"`
-	BirthDate string  `json:"birth_date"`
-	BirthTime string  `json:"birth_time"`
-	City      string  `json:"city"`
-	State     string  `json:"state"`
-	Country   string  `json:"country"`
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
+	ID        int64  `json:"id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+	Password  string `json:"-"`
+	BirthDate string `json:"birth_date"`
+	BirthTime string `json:"birth_time"`
+	City      string `json:"city"`
+	State     string `json:"state"`
+	Country   string `json:"country"`
+	Latitude  string `json:"latitude"`
+	Longitude string `json:"longitude"`
 }
 
 var db *sql.DB
@@ -70,21 +73,23 @@ func initDB(dataSourceName string) {
 	}
 }
 
-func geocode(city, state, country string) (float64, float64, error) {
+func geocode(city, state, country string) (string, string, error) {
 	geocoder := opencagedata.NewGeocoder("89d5a7e1287b40b9b8418e3e7775e054")
 
 	query := fmt.Sprintf("%s, %s, %s", city, state, country)
 	result, err := geocoder.Geocode(query, nil)
 	if err != nil {
-		return 0, 0, err
+		return "", "", err
 	}
 
 	if len(result.Results) > 0 {
 		f_result := result.Results[0]
-		return float64(f_result.Geometry.Latitude), float64(f_result.Geometry.Longitude), nil
+		latitude := fmt.Sprintf("%.7f", f_result.Geometry.Latitude)
+		longitude := fmt.Sprintf("%.7f", f_result.Geometry.Longitude)
+		return latitude, longitude, nil
 	}
 
-	return 0, 0, fmt.Errorf("No results found for query: %s", query)
+	return "", "", fmt.Errorf("No results found for query: %s", query)
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
@@ -93,18 +98,41 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 	// Perform input validation, hashing password, and other business logic here
 
-	query := "INSERT INTO profile (email, password, birth_date, birth_time, city, state, country, latitude, longitude) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id"
-	err := db.QueryRow(query, user.Email, user.Password, user.BirthDate, user.BirthTime, user.City, user.State, user.Country, user.Latitude, user.Longitude).Scan(&user.ID)
-
-	latitude, longitude, err := geocode(user.City, user.State, user.Country)
+	// Retrieve latitude and longitude values using the `geocode` function
+	latitudeStr, longitudeStr, err := geocode(user.City, user.State, user.Country)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error geocoding: %v", err)
 		return
 	}
 
-	user.Latitude = latitude
-	user.Longitude = longitude
+	// Convert latitude and longitude values to float64
+	latitude, err := strconv.ParseFloat(latitudeStr, 64)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error parsing latitude: %v", err)
+		return
+	}
+
+	longitude, err := strconv.ParseFloat(longitudeStr, 64)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error parsing longitude: %v", err)
+		return
+	}
+
+	// Insert user data and latitude/longitude values into the `profile` table
+	query := "INSERT INTO profile (first_name, last_name, email, password, birth_date, birth_time, city, state, country, latitude, longitude) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id"
+	err = db.QueryRow(query, user.FirstName, user.LastName, user.Email, user.Password, user.BirthDate, user.BirthTime, user.City, user.State, user.Country, latitude, longitude).Scan(&user.ID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error inserting data: %v", err)
+		return
+	}
+
+	// Set the latitude and longitude values for the response
+	user.Latitude = latitudeStr
+	user.Longitude = longitudeStr
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
