@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -48,6 +48,7 @@ func main() {
 
 	// Initialize the database connection
 	initDB(dbURI)
+	log.Println("Database connected") // Added log statement
 
 	// Create a new router
 	router := mux.NewRouter()
@@ -62,8 +63,12 @@ func main() {
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 	})
 
-	http.ListenAndServe(":8080", cors.Handler(router))
-} // <- Added closing brace here
+	log.Println("Starting server on port 8080") // Added log statement
+	err := http.ListenAndServe(":8080", cors.Handler(router))
+	if err != nil {
+		log.Fatalf("Error starting server: %v", err) // Added log statement
+	}
+}
 
 func initDB(dataSourceName string) {
 	var err error
@@ -94,36 +99,63 @@ func geocode(city, state, country string) (string, string, error) {
 
 func register(w http.ResponseWriter, r *http.Request) {
 	var user User
-	json.NewDecoder(r.Body).Decode(&user)
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "Error decoding request: %v", err)
+		return
+	}
 
-	// Perform input validation, hashing password, and other business logic here
+	// Validate user input
+	if user.Email == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "Email address is required")
+		return
+	}
 
-	// Retrieve latitude and longitude values using the `geocode` function
+	if !isValidEmail(user.Email) {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "Invalid email address")
+		return
+	}
+
+	if user.City == "" || user.State == "" || user.Country == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "City, state, and country are required")
+		return
+	}
+
+	// Perform geocode lookup
 	latitudeStr, longitudeStr, err := geocode(user.City, user.State, user.Country)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "Error geocoding: %v", err)
+		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{
+			"message": "Geocoding failed",
+			"error":   fmt.Sprintf("Error geocoding: %v", err),
+		})
 		return
 	}
 
-	// Convert latitude and longitude values to float64
-	latitude, err := strconv.ParseFloat(latitudeStr, 64)
+	// Check if email address is already in use
+	query := "SELECT COUNT(*) FROM profile WHERE email = $1"
+	var count int
+	err = db.QueryRow(query, user.Email).Scan(&count)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "Error parsing latitude: %v", err)
+		fmt.Fprintf(w, "Error checking for existing profile: %v", err)
 		return
 	}
 
-	longitude, err := strconv.ParseFloat(longitudeStr, 64)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "Error parsing longitude: %v", err)
+	if count > 0 {
+		w.WriteHeader(http.StatusConflict)
+		fmt.Fprintf(w, "A profile with that email address already exists")
 		return
 	}
 
 	// Insert user data and latitude/longitude values into the `profile` table
-	query := "INSERT INTO profile (first_name, last_name, email, password, birth_date, birth_time, city, state, country, latitude, longitude) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id"
-	err = db.QueryRow(query, user.FirstName, user.LastName, user.Email, user.Password, user.BirthDate, user.BirthTime, user.City, user.State, user.Country, latitude, longitude).Scan(&user.ID)
+	query = "INSERT INTO profile (first_name, last_name, email, password, birth_date, birth_time, city, state, country, latitude, longitude) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id"
+	err = db.QueryRow(query, user.FirstName, user.LastName, user.Email, user.Password, user.BirthDate, user.BirthTime, user.City, user.State, user.Country, latitudeStr, longitudeStr).Scan(&user.ID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error inserting data: %v", err)
@@ -136,4 +168,16 @@ func register(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
+	return
+}
+
+func isValidEmail(email string) bool {
+	if email == "" {
+		return false
+	}
+
+	// Use regex to validate email format
+	// ...
+
+	return true
 }

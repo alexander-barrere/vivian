@@ -1,30 +1,39 @@
-import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Component } from "@angular/core";
+import { UserService } from "../user.service";
+import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
 
 @Component({
-  selector: 'vivian',
-  templateUrl: './vivian.component.html',
-  styleUrls: ['./vivian.component.css']
+  selector: "vivian",
+  templateUrl: "./vivian.component.html",
+  styleUrls: ["./vivian.component.css"],
 })
-
 export class VivianComponent {
+  errorMessage = "";
+  returnedLatitude: string = "";
+  returnedLongitude: string = "";
+  snackBarRef: MatSnackBarRef<any> | null = null;
   user = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    birthDate: '',
-    birthTime: '',
-    city: '',
-    state: '',
-    country: ''
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    birthDate: "",
+    birthTime: "",
+    city: "",
+    state: "",
+    country: "",
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private userService: UserService,
+    private snackBar: MatSnackBar
+  ) {}
 
   register(): void {
+    if (this.snackBarRef) {
+      this.snackBarRef.dismiss();
+    }
+  
     const requestBody = {
       first_name: this.user.firstName,
       last_name: this.user.lastName,
@@ -34,20 +43,38 @@ export class VivianComponent {
       birth_time: this.user.birthTime,
       city: this.user.city,
       state: this.user.state,
-      country: this.user.country
+      country: this.user.country,
     };
-
-    this.http
-      .post(`${environment.apiUrl}/register`, requestBody)
-      .subscribe(
-        (response) => {
-          // Handle successful registration
-          console.log('Registration successful:', response);
-        },
-        (error) => {
-          // Handle error
-          console.error('Registration error:', error);
+  
+    this.userService.register(requestBody).subscribe(
+      (response: any) => {
+        this.returnedLatitude = response.latitude;
+        this.returnedLongitude = response.longitude;
+        if (this.snackBarRef) {
+          this.snackBarRef.dismiss();
         }
-      );
+      },
+      (error) => {
+        console.error(error);
+        this.showErrorMessage(error);
+      }
+    );
   }
+  
+  showErrorMessage(errorMessage: string) {
+    if (this.snackBarRef) {
+      this.snackBarRef.dismiss();
+    }
+  
+    this.snackBarRef = this.snackBar.open(errorMessage, "Close", {
+      duration: 3000,
+      verticalPosition: "top",
+      horizontalPosition: "center",
+      panelClass: "mat-snackbar-error",
+    });
+  
+    this.snackBarRef.afterDismissed().subscribe(() => {
+      this.snackBarRef = null;
+    });
+  }  
 }

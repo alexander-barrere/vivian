@@ -1,4 +1,5 @@
 <button class="pretty-button">vivian</button>
+<div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
 <form (submit)="register()">
   <div class="form-section">
     <h2>Personal Information</h2>
@@ -16,3 +17,9 @@
   </div>
   <button type="submit">Register</button>
 </form>
+<!-- Add this code snippet after the closing </form> tag -->
+<div *ngIf="returnedLatitude && returnedLongitude" class="location-info">
+  <h2 class="location-title">Location Information</h2>
+  <p class="location-details">Latitude: {{ returnedLatitude }}</p>
+  <p class="location-details">Longitude: {{ returnedLongitude }}</p>
+</div>

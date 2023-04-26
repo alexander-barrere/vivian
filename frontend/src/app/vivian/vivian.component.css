@@ -103,3 +103,22 @@ button:hover {
 .pretty-button:hover {
   background-color: #45a049;
 }
+
+.location-info {
+  background-color: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.location-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.location-details {
+  font-size: 1.2em;
+  margin-bottom: 5px;
+}
