@@ -48,20 +48,23 @@ export class VivianComponent {
   
     this.userService.register(requestBody).subscribe(
       (response: any) => {
-        this.returnedLatitude = response.latitude;
-        this.returnedLongitude = response.longitude;
+        // Dismiss the snackBar if it's visible
         if (this.snackBarRef) {
           this.snackBarRef.dismiss();
         }
+        
+        this.returnedLatitude = response.latitude;
+        this.returnedLongitude = response.longitude;
       },
       (error) => {
         console.error(error);
         this.showErrorMessage(error);
       }
     );
-  }
+  }  
   
   showErrorMessage(errorMessage: string) {
+    // Dismiss the snackBar if it's visible
     if (this.snackBarRef) {
       this.snackBarRef.dismiss();
     }
@@ -76,5 +79,5 @@ export class VivianComponent {
     this.snackBarRef.afterDismissed().subscribe(() => {
       this.snackBarRef = null;
     });
-  }  
+  }   
 }
