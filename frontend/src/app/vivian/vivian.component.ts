@@ -48,13 +48,10 @@ export class VivianComponent {
   
     this.userService.register(requestBody).subscribe(
       (response: any) => {
-        // Dismiss the snackBar if it's visible
-        if (this.snackBarRef) {
-          this.snackBarRef.dismiss();
-        }
-        
         this.returnedLatitude = response.latitude;
         this.returnedLongitude = response.longitude;
+        this.errorMessage = ''; // Clear the error message
+        this.showSuccessMessage("Registration successful");
       },
       (error) => {
         console.error(error);
@@ -62,9 +59,8 @@ export class VivianComponent {
       }
     );
   }  
-  
+
   showErrorMessage(errorMessage: string) {
-    // Dismiss the snackBar if it's visible
     if (this.snackBarRef) {
       this.snackBarRef.dismiss();
     }
@@ -76,8 +72,29 @@ export class VivianComponent {
       panelClass: "mat-snackbar-error",
     });
   
-    this.snackBarRef.afterDismissed().subscribe(() => {
-      this.snackBarRef = null;
+    this.snackBarRef.afterOpened().subscribe(() => {
+      if (this.snackBarRef) {
+        this.snackBarRef.dismiss();
+      }
     });
-  }   
+  }
+  
+  showSuccessMessage(message: string) {
+    if (this.snackBarRef) {
+      this.snackBarRef.dismiss();
+    }
+  
+    this.snackBarRef = this.snackBar.open(message, "Close", {
+      duration: 3000,
+      verticalPosition: "top",
+      horizontalPosition: "center",
+      panelClass: "mat-snackbar-success",
+    });
+  
+    this.snackBarRef.afterOpened().subscribe(() => {
+      if (this.snackBarRef) {
+        this.snackBarRef.dismiss();
+      }
+    });
+  }  
 }

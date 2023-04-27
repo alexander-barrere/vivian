@@ -104,21 +104,35 @@ button:hover {
   background-color: #45a049;
 }
 
-.location-info {
-  background-color: #f5f5f5;
-  border: 1px solid #e0e0e0;
-  border-radius: 5px;
-  padding: 20px;
-  margin-top: 20px;
+.location-title {
+  margin-bottom: 10px;
+  font-weight: bold;
 }
 
-.location-title {
-  font-size: 1.5em;
-  font-weight: bold;
-  margin-bottom: 10px;
+.location-info {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  text-align: center; /* Add this line to center the text */
 }
 
 .location-details {
-  font-size: 1.2em;
+  display: flex; /* Change 'inline-flex' to 'flex' */
+  align-items: center;
   margin-bottom: 5px;
+  justify-content: center; /* Add this line to center the content */
+}
+
+.location-label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.location-value {
+  font-family: monospace;
+}
+
+.mat-snackbar-success {
+  background-color: #43a047;
 }

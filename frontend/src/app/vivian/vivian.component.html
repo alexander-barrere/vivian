@@ -1,25 +1,31 @@
 <button class="pretty-button">vivian</button>
 <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-<form (submit)="register()">
+<form (submit)="register()" #registerForm="ngForm">
   <div class="form-section">
     <h2>Personal Information</h2>
-    <input [(ngModel)]="user.firstName" name="firstName" placeholder="First Name">
-    <input [(ngModel)]="user.lastName" name="lastName" placeholder="Last Name">
-    <input [(ngModel)]="user.email" name="email" placeholder="Email">
+    <input [(ngModel)]="user.firstName" name="firstName" placeholder="First Name" required>
+    <input [(ngModel)]="user.lastName" name="lastName" placeholder="Last Name" required>
+    <input [(ngModel)]="user.email" name="email" placeholder="Email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$">
   </div>
   <div class="form-section">
     <h2>Birth Data</h2>
-    <input [(ngModel)]="user.city" name="city" placeholder="City">
-    <input [(ngModel)]="user.state" name="state" placeholder="State">
-    <input [(ngModel)]="user.country" name="country" placeholder="Country">
-    <input [(ngModel)]="user.birthDate" name="birthDate" placeholder="Birth date" type="date">
-    <input [(ngModel)]="user.birthTime" name="birthTime" placeholder="Birth time" type="time">
+    <input [(ngModel)]="user.city" name="city" placeholder="City" required>
+    <input [(ngModel)]="user.state" name="state" placeholder="State" required>
+    <input [(ngModel)]="user.country" name="country" placeholder="Country" required>
+    <input [(ngModel)]="user.birthDate" name="birthDate" placeholder="Birth date" type="date" required>
+    <input [(ngModel)]="user.birthTime" name="birthTime" placeholder="Birth time" type="time" required>
   </div>
-  <button type="submit">Register</button>
+  <button type="submit" [disabled]="!registerForm.valid">Register</button>
 </form>
 <!-- Add this code snippet after the closing </form> tag -->
 <div *ngIf="returnedLatitude && returnedLongitude" class="location-info">
   <h2 class="location-title">Location Information</h2>
-  <p class="location-details">Latitude: {{ returnedLatitude }}</p>
-  <p class="location-details">Longitude: {{ returnedLongitude }}</p>
+  <div class="location-details">
+    <div class="location-label">Latitude:</div>
+    <div class="location-value">{{ returnedLatitude }}</div>
+  </div>
+  <div class="location-details">
+    <div class="location-label">Longitude:</div>
+    <div class="location-value">{{ returnedLongitude }}</div>
+  </div>
 </div>
