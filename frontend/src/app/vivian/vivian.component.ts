@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { UserService } from "../user.service";
 import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
+import { LocationService } from '../location.service';
 
 @Component({
   selector: "vivian",
@@ -26,6 +27,7 @@ export class VivianComponent {
 
   constructor(
     private userService: UserService,
+    private locationService: LocationService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -77,6 +79,26 @@ export class VivianComponent {
         this.snackBarRef.dismiss();
       }
     });
+  }
+  
+  searchLocation(): void {
+    const query = `${this.user.city}, ${this.user.state}, ${this.user.country}`;
+    this.locationService.searchLocation(query).subscribe(
+      (response: any) => {
+        if (response.results && response.results.length > 0) {
+          const result = response.results[0];
+          console.log(result.formatted); // This will log the formatted address
+          // Proceed with the registration process
+        } else {
+          console.error('Invalid location');
+          // Show an error message
+        }
+      },
+      (error) => {
+        console.error(error);
+        // Show an error message
+      }
+    );
   }
   
   showSuccessMessage(message: string) {
