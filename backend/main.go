@@ -55,6 +55,7 @@ func main() {
 
 	// Register the API endpoints
 	router.HandleFunc("/register", register).Methods("POST")
+	router.HandleFunc("/login", login).Methods("POST")
 
 	// Start the HTTP server
 	cors := cors.New(cors.Options{
@@ -68,6 +69,56 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error starting server: %v", err) // Added log statement
 	}
+}
+
+func login(w http.ResponseWriter, r *http.Request) {
+	var user User
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "Error decoding request: %v", err)
+		return
+	}
+
+	// Validate user input
+	if user.Email == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "Email address is required")
+		return
+	}
+
+	if !isValidEmail(user.Email) {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "Invalid email address")
+		return
+	}
+
+	if user.Password == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "Password is required")
+		return
+	}
+
+	// Check if email address and password match a user in the database
+	query := "SELECT COUNT(*) FROM profile WHERE email = $1 AND password = $2"
+	var count int
+	err = db.QueryRow(query, user.Email, user.Password).Scan(&count)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "Error checking for existing profile: %v", err)
+		return
+	}
+
+	if count == 0 {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(w, "Invalid email address or password")
+		return
+	}
+
+	// If the email and password match, return a success status
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Login successful")
+	return
 }
 
 func initDB(dataSourceName string) {
