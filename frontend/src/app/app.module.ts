@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
-import { LocationService } from './location.service';
 import { VivianModule } from './vivian/vivian.module';
 import { LoginModule } from './login/login.module';
 import { StarfiresComponent } from './starfires/starfires.component';
@@ -28,7 +27,6 @@ import { AppComponent } from './app.component';
   ],
   providers: [
     UserService,
-    LocationService
   ],
   bootstrap: [AppComponent]
 })
