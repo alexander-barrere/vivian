@@ -7,8 +7,9 @@ import { ProfileComponent } from './profile/profile.component';
 
 const routes: Routes = [
   { path: "register", component: VivianComponent },
-  { path: "", component: LoginComponent },
+  { path: "login", component: LoginComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+  { path: "", redirectTo: "/login", pathMatch: "full" },
 ];
 
 @NgModule({

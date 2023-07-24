@@ -40,8 +40,7 @@ export class UserService {
     // Parse the JWT token to get the user's information
     const tokenPayload = JSON.parse(atob(token.split('.')[1]));
     return tokenPayload;
-  }
-  
+  }  
 
   login(user: any) {
     const apiUrl = environment.apiUrl;
