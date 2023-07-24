@@ -1,6 +1,6 @@
 <button class="pretty-button">vivian</button>
 <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-<form (submit)="register()" #registerForm="ngForm">
+<form (ngSubmit)="register()" #registerForm="ngForm">
   <div class="form-section">
     <h2>Personal Information</h2>
     <input [(ngModel)]="user.firstName" name="firstName" placeholder="First Name" required>
