@@ -6,6 +6,7 @@
     <input [(ngModel)]="user.firstName" name="firstName" placeholder="First Name" required>
     <input [(ngModel)]="user.lastName" name="lastName" placeholder="Last Name" required>
     <input [(ngModel)]="user.email" name="email" placeholder="Email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$">
+    <input [(ngModel)]="user.password" name="password" placeholder="Password" type="password" required>  <!-- Add this line -->
   </div>
   <div class="form-section">
     <h2>Birth Data</h2>
