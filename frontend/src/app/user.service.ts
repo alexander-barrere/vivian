@@ -31,6 +31,18 @@ export class UserService {
     return this.loggedIn.asObservable();
   }
 
+  getCurrentUser() {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      return null;
+    }
+  
+    // Parse the JWT token to get the user's information
+    const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+    return tokenPayload;
+  }
+  
+
   login(user: any) {
     const apiUrl = environment.apiUrl;
     return this.http.post<LoginResponse>(`${apiUrl}/login`, user)
