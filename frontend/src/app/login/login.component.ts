@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { UserService } from '../user.service';  // Make sure to import your UserService
+import { UserService } from '../user.service';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-login',
@@ -9,16 +11,16 @@ import { UserService } from '../user.service';  // Make sure to import your User
 export class LoginComponent {
   model: any = {};
 
-  constructor(private userService: UserService) { }  // Inject the UserService
+  constructor(private userService: UserService, private router: Router) { }
 
   onSubmit() {
     this.userService.login(this.model).subscribe(
       data => {
-        // Handle successful login, e.g. by redirecting to profile page
+        this.router.navigate(['/profile']);
       },
       error => {
         // Handle error, e.g. by redirecting to registration page
       }
     );
-  }
+  }  
 }
