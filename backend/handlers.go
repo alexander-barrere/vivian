@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // login handles the login API endpoint.
@@ -35,15 +36,16 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if email address and password match a user in the database
-	query := "SELECT COUNT(*) FROM profile WHERE email = $1 AND password = $2"
-	var count int
-	err = db.QueryRow(query, user.Email, user.Password).Scan(&count)
+	var hashedPassword string
+	query := "SELECT password FROM profile WHERE email = $1"
+	err = db.QueryRow(query, user.Email).Scan(&hashedPassword)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error checking for existing profile: %v", err))
 		return
 	}
 
-	if count == 0 {
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(user.Password))
+	if err != nil {
 		respondWithError(w, http.StatusUnauthorized, "Invalid email address or password")
 		return
 	}
@@ -119,9 +121,16 @@ func register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Hash the password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error hashing password: %v", err))
+		return
+	}
+
 	// Insert user data and latitude/longitude values into the `profile` table
 	query = "INSERT INTO profile (first_name, last_name, email, password, birth_date, birth_time, city, state, country, latitude, longitude) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id"
-	err = db.QueryRow(query, user.FirstName, user.LastName, user.Email, user.Password, user.BirthDate, user.BirthTime, user.City, user.State, user.Country, latitudeStr, longitudeStr).Scan(&user.ID)
+	err = db.QueryRow(query, user.FirstName, user.LastName, user.Email, string(hashedPassword), user.BirthDate, user.BirthTime, user.City, user.State, user.Country, latitudeStr, longitudeStr).Scan(&user.ID)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error inserting data: %v", err))
 		return

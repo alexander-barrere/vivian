@@ -9,4 +9,5 @@ require (
 	github.com/lib/pq v1.10.2
 	github.com/rs/cors v1.7.0
 	github.com/rubenv/opencagedata v0.0.0-20220425161225-aec12b941817
+	golang.org/x/crypto v0.11.0 // indirect
 )
