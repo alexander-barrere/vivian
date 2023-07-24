@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
 
+interface LoginResponse {
+  token: string;
+  // Add other properties as needed
+}
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +33,7 @@ export class UserService {
 
   login(user: any) {
     const apiUrl = environment.apiUrl;
-    return this.http.post(`${apiUrl}/login`, user)
+    return this.http.post<LoginResponse>(`${apiUrl}/login`, user)
       .pipe(
         catchError(this.handleError),
         tap(res => {
