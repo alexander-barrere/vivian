@@ -4,6 +4,7 @@ import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { BehaviorSubject } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 
 @Injectable({

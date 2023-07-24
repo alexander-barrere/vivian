@@ -18,11 +18,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if count == 0 {
-		respondWithError(w, http.StatusUnauthorized, "Invalid email address or password")
-		return
-	}
-
 	// Validate user input
 	if user.Email == "" {
 		respondWithError(w, http.StatusBadRequest, "Email address is required")
@@ -154,6 +149,12 @@ func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 	})
+}
+
+func protectedEndpointHandler(w http.ResponseWriter, r *http.Request) {
+	// This is a protected endpoint, handle it here
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "Access to protected endpoint successful")
 }
 
 // respondWithError writes an error message to the response.
