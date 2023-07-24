@@ -48,10 +48,24 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// If the email and password match, return a success status
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "Login successful")
-	return
+	// Generate a JWT token
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"email": user.Email,
+		// Add other claims as needed
+	})
+
+	// Sign the token with a secret key
+	tokenString, err := token.SignedString([]byte("5f82737a11461f864f9417395fde341921fedf1b980fc907ed1f6e6efca01064"))
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error signing token: %v", err))
+		return
+	}
+
+	// Return the token in the response
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"token": tokenString,
+	})
 }
 
 // register handles the register API endpoint.
@@ -130,7 +144,7 @@ func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 					return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 				}
-				return []byte("your-secret-key"), nil
+				return []byte("5f82737a11461f864f9417395fde341921fedf1b980fc907ed1f6e6efca01064"), nil
 			})
 			if err != nil {
 				respondWithError(w, http.StatusUnauthorized, "Invalid token")
