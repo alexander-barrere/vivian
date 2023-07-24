@@ -12,10 +12,12 @@ import { AppComponent } from "./app.component";
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './auth.interceptor';
 import { AuthGuard } from './auth.guard';
+import { ProfileComponent } from './profile/profile.component';
+import { NavigationComponent } from './profile/navigation/navigation.component';
 
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, ProfileComponent, NavigationComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
