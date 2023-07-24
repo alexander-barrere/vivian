@@ -19,6 +19,7 @@ func main() {
 	// Register the API endpoints
 	router.HandleFunc("/register", register).Methods("POST")
 	router.HandleFunc("/login", login).Methods("POST")
+	router.Handle("/protected-endpoint", validateTokenMiddleware(protectedEndpointHandler)).Methods("GET")
 
 	// Start the HTTP server
 	cors := cors.New(cors.Options{

@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 // login handles the login API endpoint.
@@ -12,6 +15,11 @@ func login(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Error decoding request: %v", err))
+		return
+	}
+
+	if count == 0 {
+		respondWithError(w, http.StatusUnauthorized, "Invalid email address or password")
 		return
 	}
 
@@ -117,6 +125,35 @@ func register(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
 	return
+}
+
+func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authorizationHeader := r.Header.Get("Authorization")
+		if authorizationHeader != "" {
+			token, err := jwt.Parse(authorizationHeader, func(token *jwt.Token) (interface{}, error) {
+				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+					return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+				}
+				return []byte("your-secret-key"), nil
+			})
+			if err != nil {
+				respondWithError(w, http.StatusUnauthorized, "Invalid token")
+				return
+			}
+			if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+				// Add claims to request context
+				ctx := context.WithValue(r.Context(), "email", claims["email"])
+				next.ServeHTTP(w, r.WithContext(ctx))
+			} else {
+				respondWithError(w, http.StatusUnauthorized, "Invalid token")
+				return
+			}
+		} else {
+			respondWithError(w, http.StatusUnauthorized, "An authorization header is required")
+			return
+		}
+	})
 }
 
 // respondWithError writes an error message to the response.

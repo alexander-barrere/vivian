@@ -3,6 +3,8 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../environments/environment';
+import { BehaviorSubject } from 'rxjs';
+
 
 @Injectable({
   providedIn: 'root'
@@ -19,12 +21,27 @@ export class UserService {
       );
   }
 
+  private loggedIn = new BehaviorSubject<boolean>(false);
+
+  get isLoggedIn() {
+    return this.loggedIn.asObservable();
+  }
+
   login(user: any) {
     const apiUrl = environment.apiUrl;
     return this.http.post(`${apiUrl}/login`, user)
       .pipe(
-        catchError(this.handleError)
+        catchError(this.handleError),
+        tap(res => {
+          localStorage.setItem('auth_token', res.token);
+          this.loggedIn.next(true);
+        })
       );
+  }
+
+  logout() {
+    localStorage.removeItem('auth_token');
+    this.loggedIn.next(false);
   }
 
   private handleError(error: HttpErrorResponse) {

@@ -1,21 +1,21 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
-import { AppRoutingModule } from './app-routing.module';
-import { VivianModule } from './vivian/vivian.module';
-import { LoginModule } from './login/login.module';
-import { StarfiresComponent } from './starfires/starfires.component';
-import { UserService } from './user.service';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { LoginComponent } from './login/login.component';
-import { RouterModule } from '@angular/router';
-import { AppComponent } from './app.component';
+import { BrowserModule } from "@angular/platform-browser";
+import { NgModule } from "@angular/core";
+import { HttpClientModule } from "@angular/common/http";
+import { AppRoutingModule } from "./app-routing.module";
+import { VivianModule } from "./vivian/vivian.module";
+import { LoginModule } from "./login/login.module";
+import { UserService } from "./user.service";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { LoginComponent } from "./login/login.component";
+import { RouterModule } from "@angular/router";
+import { AppComponent } from "./app.component";
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './auth.interceptor';
+import { AuthGuard } from './auth.guard';
+
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    StarfiresComponent,
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -23,11 +23,16 @@ import { AppComponent } from './app.component';
     AppRoutingModule,
     VivianModule,
     LoginModule,
-    RouterModule
+    RouterModule,
   ],
   providers: [
     UserService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
