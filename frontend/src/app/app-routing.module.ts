@@ -7,7 +7,6 @@ import { AuthGuard } from './auth.guard';
 const routes: Routes = [
   { path: "register", component: VivianComponent },
   { path: "", component: LoginComponent },
-  { path: 'protected-route', component: ProtectedComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({
