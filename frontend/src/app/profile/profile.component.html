@@ -1,6 +1,18 @@
 <h1>Profile</h1>
 
 <div *ngIf="user">
-    <p>Email: {{ user.email }}</p>
-    <!-- Add more fields as needed -->
+    <div class="form-section">
+        <h2>Personal Information</h2>
+        <p>First Name: {{ user.firstName }}</p>
+        <p>Last Name: {{ user.lastName }}</p>
+        <p>Email: {{ user.email }}</p>
+    </div>
+    <div class="form-section">
+        <h2>Birth Data</h2>
+        <p>City: {{ user.city }}</p>
+        <p>State: {{ user.state }}</p>
+        <p>Country: {{ user.country }}</p>
+        <p>Birth Date: {{ user.birthDate }}</p>
+        <p>Birth Time: {{ user.birthTime }}</p>
+    </div>
 </div>
