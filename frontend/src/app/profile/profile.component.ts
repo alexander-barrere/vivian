@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../user.service';
 import { latLng, tileLayer, marker, icon } from 'leaflet';
+import { Map } from 'leaflet';
 
 @Component({
   selector: 'app-profile',
@@ -19,6 +20,11 @@ export class ProfileComponent implements OnInit {
   layers = [];
 
   constructor(private userService: UserService) { }
+
+  map: Map;
+  onMapReady(map: Map) {
+    this.map = map;
+  }
 
   ngOnInit(): void {
     this.user = this.userService.getCurrentUser();
