@@ -17,4 +17,7 @@
     </div>
     <div leaflet [leafletOptions]="options" [leafletLayers]="layers">
     </div>
+    <div *ngIf="!user.latitude || !user.longitude" class="error-message">
+        Location data is not available.
+    </div>    
 </div>
