@@ -34,10 +34,10 @@ export class ProfileComponent implements OnInit {
         icon: icon({
           iconSize: [ 25, 41 ],
           iconAnchor: [ 13, 41 ],
-          iconUrl: 'leaflet/marker-icon.png',
-          shadowUrl: 'leaflet/marker-shadow.png'
+          iconUrl: 'assets/leaflet/marker-icon.png',
+          shadowUrl: 'assets/leaflet/marker-shadow.png'
         })
-      }));
+      }));      
     }
   }  
 }
