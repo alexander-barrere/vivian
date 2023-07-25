@@ -1,25 +1,21 @@
-<h1>Profile</h1>
-<div *ngIf="user">
-    <div class="form-section">
-        <h2>Personal Information</h2>
-        <p>First Name: {{ user.firstName }}</p>
-        <p>Last Name: {{ user.lastName }}</p>
-        <p>Email: {{ user.email }}</p>
+<div class="profile-container">
+    <div class="user-data">
+      <h2>Personal Information</h2>
+      <p><i class="fas fa-user"></i> {{ user.firstName }} {{ user.lastName }}</p>
+      <p><i class="fas fa-envelope"></i> {{ user.email }}</p>
+      <h2>Birth Data</h2>
+      <p><i class="fas fa-city"></i> {{ user.city }}, {{ user.state }}, {{ user.country }}</p>
+      <p><i class="fas fa-birthday-cake"></i> {{ user.birthDate }}</p>
+      <p><i class="fas fa-clock"></i> {{ user.birthTime }}</p>
+      <p><i class="fas fa-map-marker-alt"></i> {{ user.latitude }}, {{ user.longitude }}</p>
     </div>
-    <div class="form-section">
-        <h2>Birth Data</h2>
-        <p>City: {{ user.city }}</p>
-        <p>State: {{ user.state }}</p>
-        <p>Country: {{ user.country }}</p>
-        <p>Birth Date: {{ user.birthDate }}</p>
-        <p>Birth Time: {{ user.birthTime }}</p>
-        <p>Latitude: {{ user.latitude }}</p>
-        <p>Longitude: {{ user.longitude }}</p>
+  
+    <div class="map-container">
+      <div leaflet 
+           [leafletOptions]="options" 
+           [leafletLayers]="layers"
+           (leafletMapReady)="onMapReady($event)">
+      </div>
     </div>
-    <div leaflet [leafletOptions]="options" [leafletLayers]="layers" (leafletMapReady)="onMapReady($event)">
-    </div>
-
-    <div *ngIf="!user.latitude || !user.longitude" class="error-message">
-        Location data is not available.
-    </div>
-</div>
+  </div>
+  

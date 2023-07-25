@@ -36,9 +36,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if email address and password match a user in the database
-	var hashedPassword, latitude, longitude string
-	query := "SELECT password, latitude, longitude FROM profile WHERE email = $1"
-	err = db.QueryRow(query, user.Email).Scan(&hashedPassword, &latitude, &longitude)
+	var hashedPassword, firstName, lastName, city, state, country, birthDate, birthTime, latitude, longitude string
+	query := "SELECT first_name, last_name, password, city, state, country, birth_date, birth_time, latitude, longitude FROM profile WHERE email = $1"
+	err = db.QueryRow(query, user.Email).Scan(&firstName, &lastName, &hashedPassword, &city, &state, &country, &birthDate, &birthTime, &latitude, &longitude)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error checking for existing profile: %v", err))
 		return
@@ -52,9 +52,16 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	// Generate a JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email":     user.Email,
-		"latitude":  latitude,
-		"longitude": longitude,
+		"email":      user.Email,
+		"first_name": firstName,
+		"last_name":  lastName,
+		"city":       city,
+		"state":      state,
+		"country":    country,
+		"birth_date": birthDate,
+		"birth_time": birthTime,
+		"latitude":   latitude,
+		"longitude":  longitude,
 	})
 
 	// Sign the token with a secret key
