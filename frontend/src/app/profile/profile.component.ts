@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../user.service';
-import { latLng, tileLayer, marker, icon } from 'leaflet';
+import { latLng, tileLayer, marker, icon, Layer } from 'leaflet';
 import { Map } from 'leaflet';
 import { HttpClient } from '@angular/common/http';
 
@@ -16,6 +16,14 @@ export class ProfileComponent implements OnInit {
   transitChartPath: string;
   map: Map;
   marker: any;
+  options = {
+    layers: [
+      tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })
+    ],
+    zoom: 5,
+    center: latLng(46.879966, -121.726909)
+  };
+  layers: Layer[] = [];
 
   constructor(private userService: UserService, private http: HttpClient) { }
 
