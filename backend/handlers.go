@@ -144,16 +144,17 @@ func register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Generate the Natal chart for the user and store the SVG file path
-	var natalChartPath string
+	fmt.Println("Generating Natal chart...")
 	svgPath, err := callPythonScript(user, "Natal")
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error generating Natal chart: %v", err))
 		return
 	}
-	natalChartPath = svgPath
+	user.NatalChartPath = svgPath
 
 	// Update the user data in the database
-	err = updateUserData(user.ID, natalChartPath)
+	fmt.Println("Updating user data in the database...")
+	err = updateUserData(user.ID, user.NatalChartPath)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error updating user data: %v", err))
 		return

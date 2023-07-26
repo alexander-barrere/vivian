@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/url"
 	"os/exec"
+	"strings"
 
 	_ "github.com/lib/pq"
 )
@@ -66,17 +67,12 @@ func updateUserData(id int, natalChartPath string) error {
 }
 
 func callPythonScript(user User, chartType string) (string, error) {
-	// Command to run the Python script
-	cmd := exec.Command("python3", "./chart-generator.py", user.FirstName, user.BirthDate, user.BirthTime, user.City, chartType)
-
-	// Run the command and capture the output
-	output, err := cmd.Output()
+	fmt.Printf("Running Python script to generate %s chart...\n", chartType)
+	cmd := exec.Command("python3", "chart-generator.py", user.FirstName, user.BirthDate, user.BirthTime, user.City, chartType)
+	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return "", err
 	}
-
-	// The output should be the file path of the Natal chart SVG
-	svgPath := string(output)
-
-	return svgPath, nil
+	fmt.Printf("Python script output: %s\n", output)
+	return strings.TrimSpace(string(output)), nil
 }

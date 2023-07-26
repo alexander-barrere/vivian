@@ -11,6 +11,7 @@ dbHost = "localhost"
 dbPort = "5432"
 
 # Connect to the PostgreSQL database
+print("Connecting to the database...")
 conn = psycopg2.connect(
     dbname=dbName,
     user=dbUser,
@@ -26,13 +27,16 @@ cur = conn.cursor()
 first_name, birth_date, birth_time, city, chart_type = sys.argv[1:]
 
 # Parse the birth date and time
+print("Parsing birth date and time...")
 birth_date = datetime.strptime(birth_date, "%Y-%m-%d")
 birth_time = datetime.strptime(birth_time, "%H:%M")
 
 # Create a KrInstance object
+print("Creating KrInstance object...")
 kr_instance = KrInstance(first_name, birth_date.year, birth_date.month, birth_date.day, birth_time.hour, birth_time.minute, city)
 
 # Use the KrInstance object to create a MakeSvgInstance object and generate the SVG file
+print("Generating SVG file...")
 make_svg_instance = MakeSvgInstance(kr_instance, chart_type=chart_type)
 make_svg_instance.makeSVG()
 
@@ -40,5 +44,4 @@ make_svg_instance.makeSVG()
 cur.close()
 conn.close()
 
-# Print the SVG file path
-print(make_svg_instance.svg_file_path)
+print("SVG file generated.")
