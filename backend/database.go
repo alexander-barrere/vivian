@@ -52,12 +52,12 @@ func fetchUserData(id int) (User, error) {
 }
 
 // Function to update user data in the database
-func updateUserData(id int, svgPath string) error {
+func updateUserData(id int, natalChartPath string, compositeChartPath string, transitChartPath string) error {
 	// SQL query to update the user data
-	query := `UPDATE profile SET natal_chart = $1 WHERE id = $2`
+	query := `UPDATE profile SET natal_chart = $1, composite_chart = $2, transit_chart = $3 WHERE id = $4`
 
 	// Execute the query
-	_, err := db.Exec(query, svgPath, id)
+	_, err := db.Exec(query, natalChartPath, compositeChartPath, transitChartPath, id)
 	if err != nil {
 		return err
 	}
@@ -65,9 +65,9 @@ func updateUserData(id int, svgPath string) error {
 	return nil
 }
 
-func callPythonScript(user User) (string, error) {
+func callPythonScript(user User, chartType string) (string, error) {
 	// Command to run the Python script
-	cmd := exec.Command("python3", "./chart-generator.py", user.FirstName, user.BirthDate, user.BirthTime, user.City)
+	cmd := exec.Command("python3", "./chart-generator.py", user.FirstName, user.BirthDate, user.BirthTime, user.City, chartType)
 
 	// Run the command and capture the output
 	output, err := cmd.Output()
