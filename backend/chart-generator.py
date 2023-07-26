@@ -4,6 +4,10 @@ from datetime import datetime
 import sys
 import os
 
+def generate_svg_and_print_path(svg_instance):
+    svg_instance.makeSVG()
+    print(svg_instance.chartname)
+
 # Define the database connection details
 dbUser = "starfja8_vivian"
 dbPass = "PZq(tDO^0NjV"  # Your actual password
@@ -41,14 +45,14 @@ print("Generating SVG file...")
 make_svg_instance = MakeSvgInstance(kr_instance, chart_type=chart_type)
 
 # Define the directory to save the SVG file
-svg_dir = "../frontend/src/app/assets/charts/"
+svg_dir = "../frontend/src/assets/charts/"
 os.makedirs(svg_dir, exist_ok=True)
 
-# Define the SVG file path
-make_svg_instance.svg_file_path = os.path.join(svg_dir, f"{first_name}{chart_type}Chart.svg")
+# Set the output directory for the MakeSvgInstance object
+make_svg_instance.set_output_directory(svg_dir)
 
-# Generate the SVG file
-make_svg_instance.makeSVG()
+# Generate the SVG file and print the path
+generate_svg_and_print_path(make_svg_instance)
 
 # Close the cursor and connection
 cur.close()
