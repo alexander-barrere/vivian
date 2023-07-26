@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"database/sql"
+	"errors"
 	"fmt"
 	"net/url"
 	"os/exec"
@@ -66,13 +68,44 @@ func updateUserData(id int, natalChartPath string) error {
 	return nil
 }
 
+// Function to call the Python script to generate the natal chart
 func callPythonScript(user User, chartType string) (string, error) {
-	fmt.Printf("Running Python script to generate %s chart...\n", chartType)
+	// Prepare the command to call the Python script
 	cmd := exec.Command("python3", "chart-generator.py", user.FirstName, user.BirthDate, user.BirthTime, user.City, chartType)
-	output, err := cmd.CombinedOutput()
+
+	// Capture the stdout output
+	var out bytes.Buffer
+	cmd.Stdout = &out
+
+	// Run the command
+	err := cmd.Run()
 	if err != nil {
 		return "", err
 	}
-	fmt.Printf("Python script output: %s\n", output)
-	return strings.TrimSpace(string(output)), nil
+
+	// Split the output into lines
+	lines := strings.Split(out.String(), "\n")
+
+	// Initialize the SVG file path
+	var svgFilePath string
+
+	// Iterate over the lines to find the SVG file path
+	for _, line := range lines {
+		// If the line contains the SVG file path, save it
+		if strings.Contains(line, ".svg") {
+			parts := strings.Split(line, ":")
+			if len(parts) > 1 {
+				svgFilePath = strings.TrimSpace(parts[1])
+			}
+			break
+		}
+	}
+
+	// If the SVG file path was not found, return an error
+	if svgFilePath == "" {
+		return "", errors.New("SVG file path not found in Python script output")
+	}
+
+	// Return the SVG file path and no error
+	return svgFilePath, nil
 }
