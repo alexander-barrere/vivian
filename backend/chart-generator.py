@@ -6,7 +6,9 @@ import os
 
 def generate_svg_and_print_path(svg_instance):
     svg_instance.makeSVG()
-    print(svg_instance.chartname)
+    # Convert the absolute path to a relative path
+    relative_svg_file_path = os.path.join("assets/charts", os.path.basename(svg_instance.chartname))
+    print(relative_svg_file_path)
 
 # Define the database connection details
 dbUser = "starfja8_vivian"
