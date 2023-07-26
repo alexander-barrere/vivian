@@ -92,12 +92,8 @@ func callPythonScript(user User, chartType string) (string, error) {
 	// Iterate over the lines to find the SVG file path
 	for _, line := range lines {
 		// If the line contains the SVG file path, save it
-		if strings.Contains(line, ".svg") {
-			parts := strings.Split(line, ":")
-			if len(parts) > 1 {
-				svgFilePath = strings.TrimSpace(parts[1])
-			}
-			break
+		if strings.Contains(line, "assets/charts/") {
+			svgFilePath = strings.TrimSpace(line)
 		}
 	}
 
