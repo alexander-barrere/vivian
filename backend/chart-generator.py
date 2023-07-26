@@ -2,6 +2,7 @@ import psycopg2
 from kerykeion import KrInstance, MakeSvgInstance
 from datetime import datetime
 import sys
+import os
 
 # Define the database connection details
 dbUser = "starfja8_vivian"
@@ -35,9 +36,18 @@ birth_time = datetime.strptime(birth_time, "%H:%M")
 print("Creating KrInstance object...")
 kr_instance = KrInstance(first_name, birth_date.year, birth_date.month, birth_date.day, birth_time.hour, birth_time.minute, city)
 
-# Use the KrInstance object to create a MakeSvgInstance object and generate the SVG file
+# Use the KrInstance object to create a MakeSvgInstance object
 print("Generating SVG file...")
 make_svg_instance = MakeSvgInstance(kr_instance, chart_type=chart_type)
+
+# Define the directory to save the SVG file
+svg_dir = "../frontend/src/app/assets/charts/"
+os.makedirs(svg_dir, exist_ok=True)
+
+# Define the SVG file path
+make_svg_instance.svg_file_path = os.path.join(svg_dir, f"{first_name}{chart_type}Chart.svg")
+
+# Generate the SVG file
 make_svg_instance.makeSVG()
 
 # Close the cursor and connection
