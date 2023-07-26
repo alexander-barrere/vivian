@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -167,6 +169,27 @@ func register(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
 	return
+}
+
+func getProfile(w http.ResponseWriter, r *http.Request) {
+	// Get the user ID from the URL parameters
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
+		return
+	}
+
+	// Fetch the user data from the database
+	user, err := fetchUserData(id)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error fetching user data: %v", err))
+		return
+	}
+
+	// Return the user data in the response
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
 }
 
 func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {

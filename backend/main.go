@@ -19,6 +19,7 @@ func main() {
 	// Register the API endpoints
 	router.HandleFunc("/register", register).Methods("POST")
 	router.HandleFunc("/login", login).Methods("POST")
+	router.HandleFunc("/profile/{id}", getProfile).Methods("GET")
 	router.Handle("/protected-endpoint", validateTokenMiddleware(protectedEndpointHandler)).Methods("GET")
 
 	// Start the HTTP server
