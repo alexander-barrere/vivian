@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../user.service';
 import { latLng, tileLayer, marker, icon } from 'leaflet';
 import { Map } from 'leaflet';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-profile',
@@ -10,34 +11,28 @@ import { Map } from 'leaflet';
 })
 export class ProfileComponent implements OnInit {
   user: any;
-  options = {
-    layers: [
-      tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })
-    ],
-    zoom: 5,
-    center: latLng(46.879966, -121.726909)
-  };
-  layers = [];
-
-  constructor(private userService: UserService) { }
-
+  natalChartPath: string;
   map: Map;
-  onMapReady(map: Map) {
-    this.map = map;
-  }
+  marker: any;
+
+  constructor(private userService: UserService, private http: HttpClient) { }
 
   ngOnInit(): void {
     this.user = this.userService.getCurrentUser();
-    if (this.user && this.user.latitude && this.user.longitude) {
-      this.options.center = latLng(this.user.latitude, this.user.longitude);
-      this.layers.push(marker([ this.user.latitude, this.user.longitude ], {
-        icon: icon({
-          iconSize: [ 25, 41 ],
-          iconAnchor: [ 13, 41 ],
-          iconUrl: 'assets/leaflet/images/marker-icon.png',
-          shadowUrl: 'assets/leaflet/images/marker-shadow.png'
-        })
-      }));      
-    }
-  }  
+    this.http.get(`http://localhost:8080/natal-chart/${this.user.id}`).subscribe((response: any) => {
+      this.natalChartPath = response.natalChartPath;
+    });
+  }
+
+  onMapReady(map: Map) {
+    this.map = map;
+    this.marker = marker([this.user.latitude, this.user.longitude], {
+      icon: icon({
+        iconSize: [ 25, 41 ],
+        iconAnchor: [ 13, 41 ],
+        iconUrl: 'leaflet/marker-icon.png',
+        shadowUrl: 'leaflet/marker-shadow.png'
+      })
+    }).addTo(this.map);
+  }
 }
