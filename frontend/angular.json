@@ -103,7 +103,6 @@
         }
       }
     },
-    "defaultProject": "christine",
     "cli": {
       "analytics": false
     }

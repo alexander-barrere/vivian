@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -36,9 +38,9 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check if email address and password match a user in the database
-	var hashedPassword string
-	query := "SELECT password FROM profile WHERE email = $1"
-	err = db.QueryRow(query, user.Email).Scan(&hashedPassword)
+	var hashedPassword, firstName, lastName, city, state, country, birthDate, birthTime, latitude, longitude string
+	query := "SELECT id, first_name, last_name, password, city, state, country, birth_date, birth_time, latitude, longitude FROM profile WHERE email = $1"
+	err = db.QueryRow(query, user.Email).Scan(&user.ID, &firstName, &lastName, &hashedPassword, &city, &state, &country, &birthDate, &birthTime, &latitude, &longitude)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error checking for existing profile: %v", err))
 		return
@@ -52,8 +54,17 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 	// Generate a JWT token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email": user.Email,
-		// Add other claims as needed
+		"id":         user.ID,
+		"email":      user.Email,
+		"first_name": firstName,
+		"last_name":  lastName,
+		"city":       city,
+		"state":      state,
+		"country":    country,
+		"birth_date": birthDate,
+		"birth_time": birthTime,
+		"latitude":   latitude,
+		"longitude":  longitude,
 	})
 
 	// Sign the token with a secret key
@@ -70,7 +81,6 @@ func login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// register handles the register API endpoint.
 func register(w http.ResponseWriter, r *http.Request) {
 	var user User
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -136,6 +146,23 @@ func register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Generate the Natal chart for the user and store the SVG file path
+	fmt.Println("Generating Natal chart...")
+	svgPath, err := callPythonScript(user, "Natal")
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error generating Natal chart: %v", err))
+		return
+	}
+	user.NatalChartPath = svgPath
+
+	// Update the user data in the database
+	fmt.Println("Updating user data in the database...")
+	err = updateUserData(user.ID, user.NatalChartPath)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error updating user data: %v", err))
+		return
+	}
+
 	// Set the latitude and longitude values for the response
 	user.Latitude = latitudeStr
 	user.Longitude = longitudeStr
@@ -143,6 +170,27 @@ func register(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(user)
 	return
+}
+
+func getProfile(w http.ResponseWriter, r *http.Request) {
+	// Get the user ID from the URL parameters
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid user ID")
+		return
+	}
+
+	// Fetch the user data from the database
+	user, err := fetchUserData(id)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error fetching user data: %v", err))
+		return
+	}
+
+	// Return the user data in the response
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
 }
 
 func validateTokenMiddleware(next http.HandlerFunc) http.HandlerFunc {

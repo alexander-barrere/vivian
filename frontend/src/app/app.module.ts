@@ -14,7 +14,7 @@ import { AuthInterceptor } from './auth.interceptor';
 import { AuthGuard } from './auth.guard';
 import { ProfileComponent } from './profile/profile.component';
 import { NavigationComponent } from './navigation/navigation.component';
-
+import { LeafletModule } from '@asymmetrik/ngx-leaflet'; // Import LeafletModule
 
 @NgModule({
   declarations: [AppComponent, ProfileComponent, NavigationComponent],
@@ -26,6 +26,7 @@ import { NavigationComponent } from './navigation/navigation.component';
     VivianModule,
     LoginModule,
     RouterModule,
+    LeafletModule, // Add LeafletModule to imports array
   ],
   providers: [
     UserService,
