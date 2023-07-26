@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../user.service';
 import { latLng, tileLayer, marker, icon } from 'leaflet';
 import { Map } from 'leaflet';
-import { Chart } from 'astrochart';
 
 @Component({
   selector: 'app-profile',
@@ -38,24 +37,7 @@ export class ProfileComponent implements OnInit {
           iconUrl: 'assets/leaflet/images/marker-icon.png',
           shadowUrl: 'assets/leaflet/images/marker-shadow.png'
         })
-      }));
-  
-      // Generate the natal chart
-      let birthDate = new Date(this.user.birthDate);
-      let chart = new Chart({
-        element: document.getElementById('chart'),
-        width: 600,
-        height: 600,
-        birth: {
-          year: birthDate.getFullYear(),
-          month: birthDate.getMonth() + 1,
-          day: birthDate.getDate(),
-          hour: birthDate.getHours(),
-          minute: birthDate.getMinutes(),
-          lat: this.user.latitude,
-          lng: this.user.longitude
-        }
-      });
+      }));      
     }
-  }   
+  }  
 }
