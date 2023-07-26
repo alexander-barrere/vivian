@@ -28,3 +28,26 @@ body {
   border-color: #f5c6cb;
   color: #721c24;
 }
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes colorChange {
+  0% { stroke: #ff0000; }
+  25% { stroke: #00ff00; }
+  50% { stroke: #0000ff; }
+  75% { stroke: #ff00ff; }
+  100% { stroke: #ff0000; }
+}
+
+svg {
+  animation: 
+    rotate 20s linear infinite, 
+    colorChange 10s ease-in-out infinite;
+}

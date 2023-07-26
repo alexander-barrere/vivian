@@ -1,20 +1,30 @@
 <div class="profile-container">
-    <div class="user-data">
-        <p><i class="fas fa-user"></i> {{ user.firstName }} {{ user.lastName }}</p>
-        <p><i class="fas fa-envelope"></i> {{ user.email }}</p>
-        <h2>Your Birth Data</h2>
-        <p><i class="fas fa-city"></i> {{ user.city }}, {{ user.state }}, {{ user.country }}</p>
-        <p><i class="fas fa-birthday-cake"></i> {{ user.birthDate }}</p>
-        <p><i class="fas fa-clock"></i> {{ user.birthTime }}</p>
-        <p><i class="fas fa-map-marker-alt"></i> {{ user.latitude }}, {{ user.longitude }}</p>
-    </div>
-
-    <div class="map-container">
-        <div leaflet [leafletOptions]="options" [leafletLayers]="layers" (leafletMapReady)="onMapReady($event)">
+    <div class="top-container">
+        <div class="user-data">
+            <p><i class="fas fa-user"></i> {{ user.firstName }} {{ user.lastName }}</p>
+            <p><i class="fas fa-envelope"></i> {{ user.email }}</p>
+            <h2>Your Birth Data</h2>
+            <p><i class="fas fa-city"></i> {{ user.city }}, {{ user.state }}, {{ user.country }}</p>
+            <p><i class="fas fa-birthday-cake"></i> {{ user.birthDate }}</p>
+            <p><i class="fas fa-clock"></i> {{ user.birthTime }}</p>
+            <p><i class="fas fa-map-marker-alt"></i> {{ user.latitude }}, {{ user.longitude }}</p>
+        </div>
+        <div class="map-container">
+            <div leaflet [leafletOptions]="options" [leafletLayers]="layers" (leafletMapReady)="onMapReady($event)">
+            </div>
         </div>
     </div>
     <div class="natal-chart-container">
         <h2>Your Natal Chart</h2>
-        <img [src]="natalChartPath" alt="Natal Chart">  
+        <!-- Replace this with your actual SVG code -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 16v4M12 8v4" />
+            <line x1="16" y1="16" x2="16" y2="16.01" />
+            <line x1="8" y1="16" x2="8" y2="16.01" />
+            <line x1="16" y1="8" x2="16" y2="8.01" />
+            <line x1="8" y1="8" x2="8" y2="8.01" />
+        </svg>
     </div>
 </div>

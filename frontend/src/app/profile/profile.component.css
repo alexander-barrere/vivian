@@ -1,7 +1,11 @@
 .profile-container {
+  padding: 20px;
+}
+
+.top-container {
   display: flex;
   justify-content: space-between;
-  padding: 20px;
+  margin-bottom: 20px;
 }
 
 .user-data {
@@ -14,6 +18,19 @@
 
 .map-container {
   width: 50%;
+}
+
+@keyframes scaleIn {
+  from {
+      transform: scale(0);
+  }
+  to {
+      transform: scale(1);
+  }
+}
+
+.natal-chart-container img {
+  animation: scaleIn 2s ease-out forwards;
 }
 
 div[leaflet] {
