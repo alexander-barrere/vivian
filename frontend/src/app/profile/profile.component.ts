@@ -12,6 +12,8 @@ import { HttpClient } from '@angular/common/http';
 export class ProfileComponent implements OnInit {
   user: any;
   natalChartPath: string;
+  compositeChartPath: string;
+  transitChartPath: string;
   map: Map;
   marker: any;
 
@@ -19,8 +21,10 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.user = this.userService.getCurrentUser();
-    this.http.get(`http://localhost:8080/natal-chart/${this.user.id}`).subscribe((response: any) => {
+    this.http.get(`http://localhost:8080/profile/${this.user.id}`).subscribe((response: any) => {
       this.natalChartPath = response.natalChartPath;
+      this.compositeChartPath = response.compositeChartPath;
+      this.transitChartPath = response.transitChartPath;
     });
   }
 

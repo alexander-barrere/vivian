@@ -36,14 +36,14 @@ func initDB() {
 // Function to fetch user data from the database
 func fetchUserData(id int) (User, error) {
 	// SQL query to fetch the user data
-	query := `SELECT id, first_name, birth_date, birth_time, city FROM profile WHERE id = $1`
+	query := `SELECT id, first_name, birth_date, birth_time, city, natal_chart, composite_chart, transit_chart FROM profile WHERE id = $1`
 
 	// Execute the query
 	row := db.QueryRow(query, id)
 
 	// Scan the result into a User struct
 	var user User
-	err := row.Scan(&user.ID, &user.FirstName, &user.BirthDate, &user.BirthTime, &user.City)
+	err := row.Scan(&user.ID, &user.FirstName, &user.BirthDate, &user.BirthTime, &user.City, &user.NatalChartPath, &user.CompositeChartPath, &user.TransitChartPath)
 	if err != nil {
 		return User{}, err
 	}
