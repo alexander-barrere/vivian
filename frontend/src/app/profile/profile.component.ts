@@ -20,8 +20,7 @@ export class ProfileComponent implements OnInit {
     layers: [
       tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '...' })
     ],
-    zoom: 5,
-    center: latLng(46.879966, -121.726909)
+    zoom: 5
   };
   layers: Layer[] = [];
 
@@ -46,5 +45,6 @@ export class ProfileComponent implements OnInit {
         shadowUrl: '../../assets/leaflet/images/marker-shadow.png'
       })
     }).addTo(this.map);
+    this.map.setView([this.user.latitude, this.user.longitude], this.options.zoom);
   }
 }
