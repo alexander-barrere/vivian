@@ -1,5 +1,6 @@
 .mat-toolbar {
   background-color: #673ab7;  /* Deep Purple 500 */
+  position: relative;  /* Add this line */
 }
 
 .mat-button {
@@ -8,4 +9,10 @@
 
 .active-link {
   color: #ffc107;  /* Amber A200 */
+}
+
+::ng-deep .mat-menu-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
 }
