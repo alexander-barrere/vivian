@@ -7,7 +7,7 @@ body {
 }
 
 .input-container {
-  width: 80%;
+  width: 100%;
   max-width: 500px; /* Add a max-width to prevent the fields from becoming too wide on large screens */
   margin: 0 auto;
 }

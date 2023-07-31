@@ -7,7 +7,6 @@
         </div>
         <div [hidden]="email.valid || email.pristine" class="error">Email is required</div>
     </div>
-
     <div class="form-group">
         <label for="password">Password</label>
         <div class="input-container"> <!-- Add this div -->
@@ -16,6 +15,5 @@
         </div>
         <div [hidden]="password.valid || password.pristine" class="error">Password is required</div>
     </div>
-
     <button type="submit" [disabled]="!loginForm.form.valid" class="btn btn-success">Login</button>
 </form>
