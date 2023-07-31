@@ -1,15 +1,15 @@
-nav {
-    background-color: #f8f9fa;
-    padding: 10px 0;
-  }
-  
-  nav a {
-    margin: 0 10px;
-    color: #333;
-    text-decoration: none;
-  }
-  
-  nav a:hover {
-    color: #007bff;
-  }
-  
+.mat-toolbar {
+  background-color: #673ab7;  /* Deep Purple 500 */
+}
+
+.mat-button {
+  color: white;
+}
+
+.active-link {
+  color: #ffc107;  /* Amber A200 */
+}
+
+.spacer {
+  flex: 1 1 auto;
+}

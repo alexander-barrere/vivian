@@ -14,7 +14,11 @@ import { AuthInterceptor } from './auth.interceptor';
 import { AuthGuard } from './auth.guard';
 import { ProfileComponent } from './profile/profile.component';
 import { NavigationComponent } from './navigation/navigation.component';
-import { LeafletModule } from '@asymmetrik/ngx-leaflet'; // Import LeafletModule
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // Import LeafletModule
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
 
 @NgModule({
   declarations: [AppComponent, ProfileComponent, NavigationComponent],
@@ -26,7 +30,11 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet'; // Import LeafletModule
     VivianModule,
     LoginModule,
     RouterModule,
-    LeafletModule, // Add LeafletModule to imports array
+    LeafletModule,
+    BrowserAnimationsModule, // Add LeafletModule to imports array
+    MatToolbarModule,
+    MatButtonModule,
+    MatMenuModule
   ],
   providers: [
     UserService,

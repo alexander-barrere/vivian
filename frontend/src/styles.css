@@ -51,3 +51,6 @@ svg {
     rotate 20s linear infinite, 
     colorChange 10s ease-in-out infinite;
 }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
