@@ -2,14 +2,43 @@
 @import "~leaflet/dist/leaflet.css";
 @import url('https://fonts.googleapis.com/css2?family=Cinzel&family=Roboto&display=swap');
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Cinzel', serif;
+/* Color Scheme */
+:root {
+  --background-color: #000033; /* dark blue */
+  --text-color: #ffffff; /* white */
+  --accent-color: #ffd700; /* gold */
 }
 
 body {
   font-family: 'Roboto', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cinzel', serif;
+  color: var(--accent-color);
+}
+
+/* Rest of your styles... */
+
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url(stars.png) repeat;
+  animation: twinkling 2s infinite;
+  z-index: -1; /* This will move the stars behind the other content */
+}
+
+@keyframes twinkling {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
 
 .container {
   max-width: 1200px;
