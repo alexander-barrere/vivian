@@ -1,5 +1,4 @@
 body {
-  /* font-family: Arial, sans-serif; Remove this line */
   background-color: #f4f4f4;
 }
 
@@ -7,9 +6,10 @@ body {
   margin-bottom: 20px;
 }
 
-.form-section input {
-  box-sizing: border-box;
-  max-width: 100%;
+.input-container {
+  width: 80%;
+  max-width: 500px; /* Add a max-width to prevent the fields from becoming too wide on large screens */
+  margin: 0 auto;
 }
 
 .form-group {
@@ -19,6 +19,7 @@ body {
 .form-label {
   display: block;
   margin-bottom: 5px;
+  color: #333;
 }
 
 .form-input {
@@ -114,11 +115,11 @@ button:hover {
   border-radius: 8px;
   padding: 20px;
   margin-top: 20px;
-  text-align: center; /* Add this line to center the text */
+  text-align: center; 
 }
 
 .location-details {
-  display: flex; /* Change 'inline-flex' to 'flex' */
+  display: flex;
   align-items: center;
   margin-bottom: 5px;
   justify-content: center; /* Add this line to center the content */
