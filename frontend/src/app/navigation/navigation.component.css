@@ -9,7 +9,3 @@
 .active-link {
   color: #ffc107;  /* Amber A200 */
 }
-
-.spacer {
-  flex: 1 1 auto;
-}

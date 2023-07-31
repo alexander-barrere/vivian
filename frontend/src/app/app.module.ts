@@ -19,6 +19,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+
 
 @NgModule({
   declarations: [AppComponent, ProfileComponent, NavigationComponent],
@@ -34,7 +36,8 @@ import { MatMenuModule } from '@angular/material/menu';
     BrowserAnimationsModule, // Add LeafletModule to imports array
     MatToolbarModule,
     MatButtonModule,
-    MatMenuModule
+    MatMenuModule,
+    MatIconModule
   ],
   providers: [
     UserService,
