@@ -7,7 +7,7 @@ import { VivianComponent } from './vivian.component';
   declarations: [VivianComponent],
   imports: [
     CommonModule,
-    FormsModule // Import FormsModule here
+    FormsModule
   ],
   exports: [VivianComponent]
 })
