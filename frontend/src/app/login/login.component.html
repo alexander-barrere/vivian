@@ -1,19 +1,17 @@
 <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
     <div class="form-group">
         <label for="email">Email</label>
-        <div class="input-container"> <!-- Add this div -->
-            <input type="email" class="form-control" id="email" required [(ngModel)]="model.email" name="email"
-                #email="ngModel">
+        <div class="input-container">
+            <input type="email" class="form-control" id="email" required [(ngModel)]="model.email" name="email" #email="ngModel" [class.is-invalid]="email.invalid && email.touched">
         </div>
-        <div [hidden]="email.valid || email.pristine" class="error">Email is required</div>
+        <div *ngIf="email.invalid && email.touched" class="error">Email is required</div>
     </div>
     <div class="form-group">
         <label for="password">Password</label>
-        <div class="input-container"> <!-- Add this div -->
-            <input type="password" class="form-control" id="password" required [(ngModel)]="model.password" name="password"
-                #password="ngModel">
+        <div class="input-container">
+            <input type="password" class="form-control" id="password" required [(ngModel)]="model.password" name="password" #password="ngModel" [class.is-invalid]="password.invalid && password.touched">
         </div>
-        <div [hidden]="password.valid || password.pristine" class="error">Password is required</div>
+        <div *ngIf="password.invalid && password.touched" class="error">Password is required</div>
     </div>
     <button type="submit" [disabled]="!loginForm.form.valid" class="btn btn-success">Login</button>
 </form>

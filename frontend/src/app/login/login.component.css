@@ -2,17 +2,27 @@ body {
   background-color: #f4f4f4;
 }
 
-.form-section {
+.form-group {
   margin-bottom: 20px;
 }
 
 .input-container {
   width: 100%;
-  max-width: 500px; /* Add a max-width to prevent the fields from becoming too wide on large screens */
+  max-width: 500px;
   margin: 0 auto;
 }
 
-.form-group {
+.is-invalid {
+  border-color: #dc3545; /* red */
+}
+
+.error {
+  color: #dc3545; /* red */
+  font-size: 0.8em;
+  margin-top: 0.25em;
+}
+
+.form-section {
   margin-bottom: 20px;
 }
 
