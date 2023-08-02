@@ -147,3 +147,33 @@ button:hover {
 .mat-snackbar-success {
   background-color: #43a047;
 }
+
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.forgot-password {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+/* Optional: Add media queries for responsiveness */
+@media (max-width: 600px) {
+  .input-container {
+    width: 100%;
+  }
+
+  form {
+    max-width: 100%;
+    padding: 15px;
+  }
+}
