@@ -1,46 +1,29 @@
+.active-link {
+  color: #ffc107; /* Amber A200 */
+}
+
 .mat-toolbar {
-  background-color: #673ab7;  /* Deep Purple 500 */
-  position: relative;  /* Add this line */
+  background-color: #673ab7; /* Deep Purple 500 */
 }
 
 .mat-button {
   color: white;
 }
 
-.active-link {
-  color: #ffc107;  /* Amber A200 */
+/* Add hover effect for main navigation links */
+.mat-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Add these styles */
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  min-width: 160px;
-  z-index: 1;
-  background-color: #673ab7;
-}
-
-.dropdown-content a {
+/* Style for Angular Material menu items */
+.mat-menu-item {
   color: white;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
   background: linear-gradient(to right, #673ab7, #673ab7);
   transition: background-position 1s;
   background-size: 200% 100%;
   background-position: right bottom;
 }
 
-.dropdown-content a:hover {
+.mat-menu-item:hover {
   background-position: left bottom;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
 }

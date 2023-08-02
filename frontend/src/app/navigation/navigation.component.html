@@ -1,11 +1,10 @@
 <mat-toolbar color="primary">
     <a mat-button routerLink="/" routerLinkActive="active-link">Home</a>
-    <div class="dropdown">
-        <button mat-button class="dropdown-button">More</button>
-        <div class="dropdown-content">
-            <a routerLink="/login" routerLinkActive="active-link">Login</a>
-            <a routerLink="/register" routerLinkActive="active-link">Register</a>
-            <a routerLink="/profile" routerLinkActive="active-link">Profile</a>
-        </div>
-    </div>
-</mat-toolbar>
+    <mat-menu #moreMenu="matMenu">
+      <button mat-menu-item routerLink="/login" routerLinkActive="active-link">Login</button>
+      <button mat-menu-item routerLink="/register" routerLinkActive="active-link">Register</button>
+      <button mat-menu-item routerLink="/profile" routerLinkActive="active-link">Profile</button>
+    </mat-menu>
+    <button mat-button [matMenuTriggerFor]="moreMenu">More</button>
+  </mat-toolbar>
+  
