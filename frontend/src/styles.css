@@ -1,27 +1,73 @@
-/* Add your CSS styles here */
 @import "~leaflet/dist/leaflet.css";
 @import url('https://fonts.googleapis.com/css2?family=Cinzel&family=Roboto&display=swap');
 
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes colorChange {
+  0% {
+    stroke: #ff0000;
+  }
+
+  25% {
+    stroke: #00ff00;
+  }
+
+  50% {
+    stroke: #0000ff;
+  }
+
+  75% {
+    stroke: #ff00ff;
+  }
+
+  100% {
+    stroke: #ff0000;
+  }
+}
+
+@keyframes twinkling {
+  0% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.5;
+  }
+}
+
 /* Color Scheme */
 :root {
-  --background-color: #000033; /* dark blue */
-  --text-color: #ffffff; /* white */
-  --accent-color: #ffd700; /* gold */
+  --background-color: #000033;
+  /* dark blue */
+  --text-color: #ffffff;
+  /* white */
+  --accent-color: #ffd700;
+  /* gold */
+}
+
+html,
+body {
+  height: 100%;
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  font-family: 'Roboto', "Helvetica Neue", sans-serif;
+  /* Choose the preferred font-family */
   background-color: var(--background-color);
   color: var(--text-color);
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Cinzel', serif;
-  color: var(--accent-color);
-}
-
-label { /* Add this selector */
-  color: #333; /* dark text color */
 }
 
 body::before {
@@ -33,13 +79,24 @@ body::before {
   height: 100%;
   background: url(stars.png) repeat;
   animation: twinkling 2s infinite;
-  z-index: -1; /* This will move the stars behind the other content */
+  z-index: -1;
+  /* This will move the stars behind the other content */
 }
 
-@keyframes twinkling {
-  0% { opacity: 0.5; }
-  50% { opacity: 1; }
-  100% { opacity: 0.5; }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Cinzel', serif;
+  color: var(--accent-color);
+}
+
+label {
+  /* Add this selector */
+  color: #333;
+  /* dark text color */
 }
 
 .container {
@@ -66,31 +123,11 @@ body::before {
   color: #721c24;
 }
 
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes colorChange {
-  0% { stroke: #ff0000; }
-  25% { stroke: #00ff00; }
-  50% { stroke: #0000ff; }
-  75% { stroke: #ff00ff; }
-  100% { stroke: #ff0000; }
-}
-
 svg {
-  animation: 
-    rotate 20s linear infinite, 
+  animation:
+    rotate 20s linear infinite,
     colorChange 10s ease-in-out infinite;
 }
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 button {
   background: linear-gradient(to right, #ff105f, #ffad06);
