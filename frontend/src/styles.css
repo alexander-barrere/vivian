@@ -89,7 +89,9 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Cinzel', serif;
+  font-family: 'Cinzel';
+  /* or 'Cinzel', serif, depending on your preference */
+  font-size: 1.5rem;
   color: var(--accent-color);
 }
 

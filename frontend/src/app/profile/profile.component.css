@@ -8,6 +8,11 @@
   margin-bottom: 20px;
 }
 
+.map-container {
+  display: flex;
+  width: 50%;
+}
+
 .user-data {
   width: 40%;
   background: #f9f9f9;
@@ -15,10 +20,6 @@
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   color: #333; /* dark text color */
-}
-
-.map-container {
-  width: 50%;
 }
 
 @keyframes scaleIn {
