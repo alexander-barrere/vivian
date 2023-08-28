@@ -82,94 +82,115 @@ func login(w http.ResponseWriter, r *http.Request) {
 }
 
 func register(w http.ResponseWriter, r *http.Request) {
-	var user User
-	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Error decoding request: %v", err))
-		return
-	}
+    fmt.Println("Starting user registration...")
 
-	// Validate user input
-	if user.Email == "" {
-		respondWithError(w, http.StatusBadRequest, "Email address is required")
-		return
-	}
+    var user User
+    err := json.NewDecoder(r.Body).Decode(&user)
+    if err != nil {
+        fmt.Printf("Error decoding request for user with email %s: %v\n", user.Email, err)
+        respondWithError(w, http.StatusBadRequest, fmt.Sprintf("Error decoding request: %v", err))
+        return
+    }
 
-	if !isValidEmail(user.Email) {
-		respondWithError(w, http.StatusBadRequest, "Invalid email address")
-		return
-	}
+    fmt.Printf("Received data: %+v\n", user)
 
-	if user.City == "" || user.State == "" || user.Country == "" {
-		respondWithError(w, http.StatusBadRequest, "City, state, and country are required")
-		return
-	}
+    // Validate user input
+    if user.Email == "" {
+        respondWithError(w, http.StatusBadRequest, "Email address is required")
+        return
+    }
 
-	// Perform geocode lookup
-	latitudeStr, longitudeStr, err := geocode(user.City, user.State, user.Country)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{
-			"message": "Geocoding failed",
-			"error":   fmt.Sprintf("Error geocoding: %v", err),
-		})
-		return
-	}
+    if !isValidEmail(user.Email) {
+        respondWithError(w, http.StatusBadRequest, "Invalid email address")
+        return
+    }
 
-	// Check if email address is already in use
-	query := "SELECT COUNT(*) FROM profile WHERE email = $1"
-	var count int
-	err = db.QueryRow(query, user.Email).Scan(&count)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error checking for existing profile: %v", err))
-		return
-	}
+    if user.City == "" || user.State == "" || user.Country == "" {
+        respondWithError(w, http.StatusBadRequest, "City, state, and country are required")
+        return
+    }
 
-	if count > 0 {
-		respondWithError(w, http.StatusConflict, "A profile with that email address already exists")
-		return
-	}
+    // Perform geocode lookup
+    latitudeStr, longitudeStr, err := geocode(user.City, user.State, user.Country)
+    if err != nil {
+        fmt.Printf("Geocoding failed for user with email %s: %v\n", user.Email, err)
+        w.WriteHeader(http.StatusBadRequest)
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(map[string]string{
+            "message": "Geocoding failed",
+            "error":   fmt.Sprintf("Error geocoding: %v", err),
+        })
+        return
+    }
 
-	// Hash the password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error hashing password: %v", err))
-		return
-	}
+    fmt.Println("Geocoding completed.")
 
-	// Insert user data and latitude/longitude values into the `profile` table
-	query = "INSERT INTO profile (first_name, last_name, email, password, birth_date, birth_time, city, state, country, latitude, longitude) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id"
-	err = db.QueryRow(query, user.FirstName, user.LastName, user.Email, string(hashedPassword), user.BirthDate, user.BirthTime, user.City, user.State, user.Country, latitudeStr, longitudeStr).Scan(&user.ID)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error inserting data: %v", err))
-		return
-	}
+    // Check if email address is already in use
+    query := "SELECT COUNT(*) FROM profile WHERE email = $1"
+    var count int
+    err = db.QueryRow(query, user.Email).Scan(&count)
+    if err != nil {
+        fmt.Printf("Error checking for existing profile with email %s: %v\n", user.Email, err)
+        respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error checking for existing profile: %v", err))
+        return
+    }
 
-	// Generate the Natal chart for the user and store the SVG file path
-	fmt.Println("Generating Natal chart...")
-	svgPath, err := callPythonScript(user, "Natal")
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error generating Natal chart: %v", err))
-		return
-	}
-	user.NatalChartPath = svgPath
+    fmt.Println("Email uniqueness check completed.")
 
-	// Update the user data in the database
-	fmt.Println("Updating user data in the database...")
-	err = updateUserData(user.ID, user.NatalChartPath)
-	if err != nil {
-		respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error updating user data: %v", err))
-		return
-	}
+    if count > 0 {
+        respondWithError(w, http.StatusConflict, "A profile with that email address already exists")
+        return
+    }
 
-	// Set the latitude and longitude values for the response
-	user.Latitude = latitudeStr
-	user.Longitude = longitudeStr
+    // Hash the password
+    hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+    if err != nil {
+        fmt.Printf("Error hashing password for user with email %s: %v\n", user.Email, err)
+        respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error hashing password: %v", err))
+        return
+    }
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
-	return
+    fmt.Println("Password hashing completed.")
+
+    // Insert user data and latitude/longitude values into the `profile` table
+    query = "INSERT INTO profile (first_name, last_name, email, password, birth_date, birth_time, city, state, country, latitude, longitude) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id"
+    err = db.QueryRow(query, user.FirstName, user.LastName, user.Email, string(hashedPassword), user.BirthDate, user.BirthTime, user.City, user.State, user.Country, latitudeStr, longitudeStr).Scan(&user.ID)
+    if err != nil {
+        fmt.Printf("Error inserting data for user with email %s: %v\n", user.Email, err)
+        respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error inserting data: %v", err))
+        return
+    }
+
+    fmt.Println("User data insertion completed.")
+
+    // Generate the Natal chart for the user and store the SVG file path
+    fmt.Println("Generating Natal chart...")
+    svgPath, err := callPythonScript(user, "Natal")
+    if err != nil {
+        fmt.Printf("Error generating Natal chart for user with email %s: %v\n", user.Email, err)
+        respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error generating Natal chart: %v", err))
+        return
+    }
+    user.NatalChartPath = svgPath
+
+    // Update the user data in the database
+    fmt.Println("Updating user data in the database...")
+    err = updateUserData(user.ID, user.NatalChartPath)
+    if err != nil {
+        fmt.Printf("Error updating user data for user with ID %d: %v\n", user.ID, err)
+        respondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Error updating user data: %v", err))
+        return
+    }
+
+    // Set the latitude and longitude values for the response
+    user.Latitude = latitudeStr
+    user.Longitude = longitudeStr
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(user)
+
+    fmt.Println("User registration completed successfully.")
+    return
 }
 
 func getProfile(w http.ResponseWriter, r *http.Request) {
