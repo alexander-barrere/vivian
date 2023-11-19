@@ -34,6 +34,9 @@ func initDB() {
 	if err != nil {
 		panic(err)
 	}
+
+	// Set the maximum number of open connections to the database.
+	db.SetMaxOpenConns(10)
 }
 
 // Function to fetch user data from the database
