@@ -15,7 +15,7 @@
 IDEAS.md
 
 # Removing the SVG charts so they are generated on the server eventually
-./frontend/src/assets/charts/*.svg
+*.svg
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
