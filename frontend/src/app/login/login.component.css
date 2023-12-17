@@ -34,8 +34,6 @@ button:hover {
   background-color: #0056b3;
 }
 
-/* If the following styles are used elsewhere, consider moving them to a shared or global CSS file */
-
 .pretty-button {
   background-color: #4CAF50;
   color: white;
